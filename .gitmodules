@@ -1,0 +1,3 @@
+[submodule "hugo-version/flowi/themes/terminal"]
+	path = hugo-version/flowi/themes/terminal
+	url = https://github.com/panr/hugo-theme-terminal.git
