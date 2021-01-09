@@ -1,5 +1,9 @@
 # day 20
 
+https://adventofcode.com/2020/day/20
+
+The task is to assemble an image from different 10x10 tiles. The tiles themselves can be flipped and rotated.
+
 ## transformations
 
 I didn't want to calculate the image transformations myself, so I used java's `java.awt.geom.AffineTransform`.
@@ -78,12 +82,19 @@ Tile 1951:
 
 ## calculating edges
 
-TODO
+To find the matching edges I decided to encode the edges of each tile (and its transformed representations) as hashes.
+For that we take the top, left, bottom and right pixels and convert them into binary representation.
 
-### hashes of edges
+```text
+#.##...##. -->
+1011000110 = 710
+```
 
-TODO
-epxlain bitshift to create hash of the edge
+So the top edge of tile 1951 from above is represented as 710.
+
+## matching edges
+
+To find a matching pair the directions of the matches matter.
 
 ### match-direction: vertical
 
@@ -99,6 +110,8 @@ id1 (left) | id2 (right)
 ```
 
 ### matching tiles
+
+This are all the matching edges.
 
 | tile1 id | transformation tile1      | tile2 id | transformation tile2      | match direction | hash of matching edge |
 | -------- | ------------------------- | -------- | ------------------------- | --------------- | --------------------- |
@@ -203,7 +216,7 @@ id1 (left) | id2 (right)
 
 If you count the number of matching tiles for each tile, you can determine their place in the picture.
 
-The tiles with only two matching tiles must be the edges of the picture. Thankfully, Erik designed the puzzle in a way that this property holds.
+The tiles with only two matching tiles must be the corners of the picture. Thankfully, Erik designed the puzzle in a way that this property holds.
 
 | tile id | number of matches | matching tiles      |
 | ------- | ----------------- | ------------------- |
