@@ -1,6 +1,2832 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>scala on Terminal</title><link>/tags/scala/</link><description>Recent content in scala on Terminal</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 02 Dec 2021 13:42:37 +0100</lastBuildDate><atom:link href="/tags/scala/index.xml" rel="self" type="application/rss+xml"/><item><title>Adventofcode - Solver in scala.js</title><link>/posts/adventofcode/2021/solver/</link><pubDate>Thu, 02 Dec 2021 13:42:37 +0100</pubDate><guid>/posts/adventofcode/2021/solver/</guid><description>This year I tried to solve the codingchallenge more visual to begin with. So I opted for scalajs using outwatch.
-AoC scalajs solver</description></item><item><title>Adventofcode 2020 - Day 20</title><link>/posts/adventofcode/2020/day-20/</link><pubDate>Sat, 02 Jan 2021 22:26:37 +0100</pubDate><guid>/posts/adventofcode/2020/day-20/</guid><description>day 20 https://adventofcode.com/2020/day/20
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Scala on fl(o)wi</title><link>/tags/scala/</link><description>Recent content in Scala on fl(o)wi</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 10 Mar 2024 12:15:49 +0100</lastBuildDate><atom:link href="/tags/scala/index.xml" rel="self" type="application/rss+xml"/><item><title>Spacetraders Agent written in scala - Architecture overview</title><link>/posts/architecture-overview/</link><pubDate>Sun, 10 Mar 2024 12:15:49 +0100</pubDate><guid>/posts/architecture-overview/</guid><description>Overview Infrastructure My go-to setup for running infrastructure services locally is docker-compose. I&amp;rsquo;m using postgres as a database and grafana for some dashboards.
+docker-compose setup for infrastructure postgres grafana Since I also developed a dashboard for the agents and wanted to reuse some helpers, I added profiles to docker-compose. If I want to start the stack for the agent, I run this command:
+docker compose --profile agent up agent architecture I like coding in a functional style and use cats-effect as the runtime effect system.</description><content>&lt;h1 id="overview">Overview&lt;/h1>
+&lt;h2 id="infrastructure">Infrastructure&lt;/h2>
+&lt;p>My go-to setup for running infrastructure services locally is docker-compose. I&amp;rsquo;m using postgres as a database and grafana for some dashboards.&lt;/p>
+&lt;ul>
+&lt;li>docker-compose setup for infrastructure
+&lt;ul>
+&lt;li>postgres&lt;/li>
+&lt;li>grafana&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>Since I also developed a dashboard for the agents and wanted to reuse some helpers, I added profiles to docker-compose. If I want to start the stack for the
+agent, I run this command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>docker compose --profile agent up
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="agent-architecture">agent architecture&lt;/h2>
+&lt;p>I like coding in a functional style and use &lt;a href="https://typelevel.org/cats-effect/">cats-effect&lt;/a> as the runtime effect system. I had trouble with the openapi
+generator for scala, since it didn&amp;rsquo;t work in some cases or didn&amp;rsquo;t produce code that matches my coding style.&lt;/p>
+&lt;p>Luckily the folks at Disney created a nice ecosystem around smithy that worked very well for code generation.
+I&amp;rsquo;m using &lt;a href="https://github.com/disneystreaming/smithy-translate">smithy-translate&lt;/a> to convert the openapi-spec into a smithy model (with minor fixes) and from
+there I use &lt;a href="https://github.com/disneystreaming/smithy4s">smithy4s&lt;/a> to generate the client.
+Shout out to the authors (especially @Baccata) who were very helpful in their discord channel when I ran into problems.&lt;/p>
+&lt;p>The library is awesome and generates code for an &lt;a href="https://http4s.org/">http4s-client&lt;/a> that is easily extensible:&lt;/p>
+&lt;ul>
+&lt;li>adding authorization via bearer-token&lt;/li>
+&lt;li>enabling request logging&lt;/li>
+&lt;li>adding rate-limiting with priority &lt;a href="https://github.com/SystemFw/upperbound">upperbound&lt;/a>&lt;/li>
+&lt;li>easy to fix
+&lt;ul>
+&lt;li>had to change the behavior of posting an empty request; client was sending &lt;code>null&lt;/code> but st-server didn&amp;rsquo;t like that&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="libraries-used">libraries used&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>lib&lt;/th>
+&lt;th>description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>smithy-translate&lt;/td>
+&lt;td>tool for converting openapi-sepc to smithy model&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>smithy4s&lt;/td>
+&lt;td>plugin for generating http4s client/server from smithy model&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>http4s&lt;/td>
+&lt;td>http client/server&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>cats-effect&lt;/td>
+&lt;td>runtime effect system&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>upperbound&lt;/td>
+&lt;td>rate limiting for cats-effect IO&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>circe&lt;/td>
+&lt;td>json (de)serialization&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>enumeratum&lt;/td>
+&lt;td>better enums for scala&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>monocle&lt;/td>
+&lt;td>optics library for easier manipulation of nested properties inside immutable datastructures&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>flyway&lt;/td>
+&lt;td>database migration&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>doobie&lt;/td>
+&lt;td>functional JDBC layer&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>fs2&lt;/td>
+&lt;td>functional streaming&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="bootstrapping-of-agent">bootstrapping of agent&lt;/h2>
+&lt;p>The startup of the agent happens with the unregistered instance of the client. It doesn&amp;rsquo;t use a bearer-token.&lt;/p>
+&lt;h3 id="database-migration">database migration&lt;/h3>
+&lt;p>When I start the agent, the first thing I check is the &lt;a href="https://api.spacetraders.io/v2/">status endpoint&lt;/a>. I take the reset-date from its response, parse it and
+use it as a schema name in postgres.
+e.g. this response&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;status&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;SpaceTraders is currently online and available to play&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;version&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;v2.1.5&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;resetDate&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;2024-02-25&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>becomes &lt;code>reset_2024_02_25&lt;/code>.&lt;/p>
+&lt;p>I use flyway to migrate my database schema (it also creates one if it doesn&amp;rsquo;t exist). From there I have a schema ready to be used and instantiate a hikari
+connection-pool with the connectionstring.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-scala" data-lang="scala">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">def&lt;/span> transactorResource&lt;span style="color:#f92672">(&lt;/span>connectionString&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> username&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> password&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> schema&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">)&lt;/span>&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Resource&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>, &lt;span style="color:#66d9ef">HikariTransactor&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>&lt;span style="color:#f92672">]]&lt;/span> &lt;span style="color:#66d9ef">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ce &lt;span style="color:#66d9ef">&amp;lt;-&lt;/span> &lt;span style="color:#a6e22e">ExecutionContexts&lt;/span>&lt;span style="color:#f92672">.&lt;/span>fixedThreadPool&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>&lt;span style="color:#f92672">](&lt;/span>&lt;span style="color:#ae81ff">32&lt;/span>&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> xa &lt;span style="color:#66d9ef">&amp;lt;-&lt;/span> &lt;span style="color:#a6e22e">HikariTransactor&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">.&lt;/span>newHikariTransactor&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>&lt;span style="color:#f92672">](&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;org.postgresql.Driver&amp;#34;&lt;/span>&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> connectionString&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> username&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> password&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ce&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">.&lt;/span>evalTap&lt;span style="color:#f92672">(&lt;/span>tx &lt;span style="color:#66d9ef">=&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> tx&lt;span style="color:#f92672">.&lt;/span>configure &lt;span style="color:#f92672">{&lt;/span> ds &lt;span style="color:#66d9ef">=&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Async&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>&lt;span style="color:#f92672">].&lt;/span>delay &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ds setSchema schema
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">}&lt;/span> &lt;span style="color:#66d9ef">yield&lt;/span> xa
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>After that step I modify the readonly grafana user to have that schema as default in its search path.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sql" data-lang="sql">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">-- Grant usage and all privileges on the schema to the user
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">GRANT&lt;/span> &lt;span style="color:#66d9ef">USAGE&lt;/span> &lt;span style="color:#66d9ef">ON&lt;/span> &lt;span style="color:#66d9ef">SCHEMA&lt;/span> reset_2024_02_25 &lt;span style="color:#66d9ef">TO&lt;/span> grafana_user;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">GRANT&lt;/span> &lt;span style="color:#66d9ef">SELECT&lt;/span> &lt;span style="color:#66d9ef">ON&lt;/span> &lt;span style="color:#66d9ef">ALL&lt;/span> TABLES &lt;span style="color:#66d9ef">IN&lt;/span> &lt;span style="color:#66d9ef">SCHEMA&lt;/span> reset_2024_02_25 &lt;span style="color:#66d9ef">TO&lt;/span> grafana_user;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">-- Grant all privileges on new tables in the schema to the user
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">ALTER&lt;/span> &lt;span style="color:#66d9ef">DEFAULT&lt;/span> &lt;span style="color:#66d9ef">PRIVILEGES&lt;/span> &lt;span style="color:#66d9ef">IN&lt;/span> &lt;span style="color:#66d9ef">SCHEMA&lt;/span> reset_2024_02_25
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">GRANT&lt;/span> &lt;span style="color:#66d9ef">ALL&lt;/span> &lt;span style="color:#66d9ef">ON&lt;/span> TABLES &lt;span style="color:#66d9ef">TO&lt;/span> grafana_user;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">-- Set the default search path to the new schema
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">ALTER&lt;/span> &lt;span style="color:#66d9ef">USER&lt;/span> grafana_user &lt;span style="color:#66d9ef">SET&lt;/span> search_path &lt;span style="color:#66d9ef">TO&lt;/span> reset_2024_02_25;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>That way I don&amp;rsquo;t need to update the grafana dashboard with new connectionstrings.&lt;/p>
+&lt;h3 id="registering-my-agent-if-necessray">registering my agent if necessray&lt;/h3>
+&lt;p>On startup I check my &lt;code>registration&lt;/code> table to see if I already registered my agent and use its token. If not I use the infos from env vars to register. I added
+a 10s delay before registering, because I forgot to change some settings in the past ;-)&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-scala" data-lang="scala">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">IO&lt;/span>&lt;span style="color:#f92672">.&lt;/span>println&lt;span style="color:#f92672">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">s&amp;#34;&amp;#34;&amp;#34;Registering agent with these details:
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> | Symbol: &lt;/span>&lt;span style="color:#e6db74">${&lt;/span>registrationInputBody&lt;span style="color:#f92672">.&lt;/span>symbol&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> | E-Mail: &lt;/span>&lt;span style="color:#e6db74">${&lt;/span>registrationInputBody&lt;span style="color:#f92672">.&lt;/span>email&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> | Faction: &lt;/span>&lt;span style="color:#e6db74">${&lt;/span>registrationInputBody&lt;span style="color:#f92672">.&lt;/span>faction&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> |
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> |You have 10s to cancel if you want to change anything.&amp;#34;&amp;#34;&amp;#34;&lt;/span>&lt;span style="color:#f92672">.&lt;/span>stripMargin&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#f92672">*&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">IO&lt;/span>&lt;span style="color:#f92672">.&lt;/span>sleep&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">10.&lt;/span>seconds&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#75715e">/* *&amp;gt; ... */&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="background-collection-of-big-data">background collection of &amp;ldquo;big&amp;rdquo; data&lt;/h2>
+&lt;p>In my codebase I use two different clients that talk to the st-servers. One with a high priority that controls the ships or loads essential data and another one
+with a low priority that collects data in the background (like systems, waypoints, jump-gates etc.)&lt;/p>
+&lt;p>The low priority client is used in a streaming context (with fs2) to prevent excessive memory usage and provide back-pressure. It&amp;rsquo;s also straightforward to ingest responses from the paginated endpoints.&lt;/p>
+&lt;p>Here&amp;rsquo;s an example in where I collect the waypoints of a system:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-scala" data-lang="scala">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">def&lt;/span> loadSystemWaypointsPaginated&lt;span style="color:#f92672">(&lt;/span>systemSymbol&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">)&lt;/span>&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Stream&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>, &lt;span style="color:#66d9ef">GetSystemWaypoints200&lt;/span>&lt;span style="color:#f92672">]&lt;/span> &lt;span style="color:#66d9ef">=&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Stream&lt;/span>&lt;span style="color:#f92672">.&lt;/span>eval&lt;span style="color:#f92672">(&lt;/span>getListWaypointsPageIO&lt;span style="color:#f92672">(&lt;/span>systemSymbol&lt;span style="color:#f92672">,&lt;/span> &lt;span style="color:#a6e22e">PaginationInput&lt;/span>&lt;span style="color:#f92672">(&lt;/span>page &lt;span style="color:#66d9ef">=&lt;/span> &lt;span style="color:#a6e22e">Some&lt;/span>&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#f92672">),&lt;/span> limit &lt;span style="color:#66d9ef">=&lt;/span> &lt;span style="color:#a6e22e">Some&lt;/span>&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">20&lt;/span>&lt;span style="color:#f92672">))))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">.&lt;/span>flatMap &lt;span style="color:#f92672">{&lt;/span> first &lt;span style="color:#66d9ef">=&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">val&lt;/span> rest &lt;span style="color:#66d9ef">=&lt;/span> &lt;span style="color:#a6e22e">PaginationHelper&lt;/span>&lt;span style="color:#f92672">.&lt;/span>calcRestRequests&lt;span style="color:#f92672">(&lt;/span>first&lt;span style="color:#f92672">.&lt;/span>body&lt;span style="color:#f92672">.&lt;/span>meta&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">val&lt;/span> restStream&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Stream&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>, &lt;span style="color:#66d9ef">GetSystemWaypoints200&lt;/span>&lt;span style="color:#f92672">]&lt;/span> &lt;span style="color:#66d9ef">=&lt;/span> &lt;span style="color:#a6e22e">Stream&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">.&lt;/span>iterable&lt;span style="color:#f92672">(&lt;/span>rest&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">.&lt;/span>lift&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>&lt;span style="color:#f92672">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">.&lt;/span>evalMap&lt;span style="color:#f92672">(&lt;/span>page &lt;span style="color:#66d9ef">=&amp;gt;&lt;/span> getListWaypointsPageIO&lt;span style="color:#f92672">(&lt;/span>systemSymbol&lt;span style="color:#f92672">,&lt;/span> page&lt;span style="color:#f92672">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Stream&lt;/span>&lt;span style="color:#f92672">(&lt;/span>first&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#f92672">++&lt;/span> restStream
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
+&lt;li>collect first page&lt;/li>
+&lt;li>take &lt;code>Meta&lt;/code> object from response of the first page to&lt;/li>
+&lt;li>calculate the numbers of the remaining pages to create a stream&lt;/li>
+&lt;li>concat the first page with the rest of the stream&lt;/li>
+&lt;/ul>
+&lt;h2 id="heading">&lt;/h2></content></item><item><title>Adventofcode - Solver in scala.js</title><link>/posts/adventofcode/2021/solver/</link><pubDate>Thu, 02 Dec 2021 13:42:37 +0100</pubDate><guid>/posts/adventofcode/2021/solver/</guid><description>This year I tried to solve the codingchallenge more visual to begin with. So I opted for scalajs using outwatch.
+AoC scalajs solver</description><content>&lt;p>This year I tried to solve the codingchallenge more visual to begin with. So I opted for scalajs using outwatch.&lt;/p>
+&lt;p>&lt;a href="/adventofcode">AoC scalajs solver&lt;/a>&lt;/p></content></item><item><title>Adventofcode 2020 - Day 20</title><link>/posts/adventofcode/2020/day-20/</link><pubDate>Sat, 02 Jan 2021 22:26:37 +0100</pubDate><guid>/posts/adventofcode/2020/day-20/</guid><description>day 20 https://adventofcode.com/2020/day/20
 The task is to assemble an image from different 10x10 tiles. The tiles themselves can be flipped and rotated.
 transformations I didn&amp;rsquo;t want to calculate the image transformations myself, so I used java&amp;rsquo;s java.awt.geom.AffineTransform. I created a 4x4 testimage with 16 different shades of red to calculate a hash of the overall image to check, which transformation yield the same result.
 all 18 possible transformations
-Clockwise180 Clockwise180,FlipHorizontal Clockwise180,FlipVertical Clockwise270 Clockwise270,FlipHorizontal Clockwise270,FlipVertical Clockwise90 Clockwise90,FlipHorizontal Clockwise90,FlipVertical FlipHorizontal FlipHorizontal,Clockwise180 FlipHorizontal,Clockwise270 FlipHorizontal,Clockwise90 FlipVertical FlipVertical,Clockwise180 FlipVertical,Clockwise270 FlipVertical,Clockwise90 NoOp examples of different transformations yielding the same image image transformations hash NoOp 0153045607590105120135150165180195210225 Clockwise270, FlipVertical 0601201801575135195309015021045105165225 FlipVertical, Clockwise90 0601201801575135195309015021045105165225 Clockwise180, FlipVertical 1801952102251201351501656075901050153045 FlipHorizontal 1801952102251201351501656075901050153045 There are only 8 distinct transformations image transformations hash NoOp 0153045607590105120135150165180195210225 Clockwise90 4510516522530901502101575135195060120180 Clockwise180 2252101951801651501351201059075604530150 Clockwise270 1801206001951357515210150903022516510545 Clockwise90, FlipVertical 2251651054521015090301951357515180120600 FlipHorizontal 1801952102251201351501656075901050153045 FlipVertical 4530150105907560165150135120225210195180 FlipVertical, Clockwise90 0601201801575135195309015021045105165225 image transformations take this tile from the example input</description></item></channel></rss>
+Clockwise180 Clockwise180,FlipHorizontal Clockwise180,FlipVertical Clockwise270 Clockwise270,FlipHorizontal Clockwise270,FlipVertical Clockwise90 Clockwise90,FlipHorizontal Clockwise90,FlipVertical FlipHorizontal FlipHorizontal,Clockwise180 FlipHorizontal,Clockwise270 FlipHorizontal,Clockwise90 FlipVertical FlipVertical,Clockwise180 FlipVertical,Clockwise270 FlipVertical,Clockwise90 NoOp examples of different transformations yielding the same image image transformations hash NoOp 0153045607590105120135150165180195210225 Clockwise270, FlipVertical 0601201801575135195309015021045105165225 FlipVertical, Clockwise90 0601201801575135195309015021045105165225 Clockwise180, FlipVertical 1801952102251201351501656075901050153045 FlipHorizontal 1801952102251201351501656075901050153045 There are only 8 distinct transformations image transformations hash NoOp 0153045607590105120135150165180195210225 Clockwise90 4510516522530901502101575135195060120180 Clockwise180 2252101951801651501351201059075604530150 Clockwise270 1801206001951357515210150903022516510545 Clockwise90, FlipVertical 2251651054521015090301951357515180120600 FlipHorizontal 1801952102251201351501656075901050153045 FlipVertical 4530150105907560165150135120225210195180 FlipVertical, Clockwise90 0601201801575135195309015021045105165225 image transformations take this tile from the example input</description><content>&lt;h1 id="day-20">day 20&lt;/h1>
+&lt;p>&lt;a href="https://adventofcode.com/2020/day/20">https://adventofcode.com/2020/day/20&lt;/a>&lt;/p>
+&lt;p>The task is to assemble an image from different 10x10 tiles. The tiles themselves can be flipped and rotated.&lt;/p>
+&lt;h2 id="transformations">transformations&lt;/h2>
+&lt;p>I didn&amp;rsquo;t want to calculate the image transformations myself, so I used java&amp;rsquo;s &lt;code>java.awt.geom.AffineTransform&lt;/code>.
+I created a 4x4 testimage with 16 different shades of red to calculate a hash of the overall image to check, which transformation yield the same result.&lt;/p>
+&lt;p>all 18 possible transformations&lt;/p>
+&lt;ul>
+&lt;li>Clockwise180&lt;/li>
+&lt;li>Clockwise180,FlipHorizontal&lt;/li>
+&lt;li>Clockwise180,FlipVertical&lt;/li>
+&lt;li>Clockwise270&lt;/li>
+&lt;li>Clockwise270,FlipHorizontal&lt;/li>
+&lt;li>Clockwise270,FlipVertical&lt;/li>
+&lt;li>Clockwise90&lt;/li>
+&lt;li>Clockwise90,FlipHorizontal&lt;/li>
+&lt;li>Clockwise90,FlipVertical&lt;/li>
+&lt;li>FlipHorizontal&lt;/li>
+&lt;li>FlipHorizontal,Clockwise180&lt;/li>
+&lt;li>FlipHorizontal,Clockwise270&lt;/li>
+&lt;li>FlipHorizontal,Clockwise90&lt;/li>
+&lt;li>FlipVertical&lt;/li>
+&lt;li>FlipVertical,Clockwise180&lt;/li>
+&lt;li>FlipVertical,Clockwise270&lt;/li>
+&lt;li>FlipVertical,Clockwise90&lt;/li>
+&lt;li>NoOp&lt;/li>
+&lt;/ul>
+&lt;h3 id="examples-of-different-transformations-yielding-the-same-image">examples of different transformations yielding the same image&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>image&lt;/th>
+&lt;th>transformations&lt;/th>
+&lt;th>hash&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_0153045607590105120135150165180195210225_NoOp.png#width_small" alt="" />
+&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>0153045607590105120135150165180195210225&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_0601201801575135195309015021045105165225_Clockwise270FlipVertical.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise270, FlipVertical&lt;/td>
+&lt;td>0601201801575135195309015021045105165225&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_0601201801575135195309015021045105165225_FlipVerticalClockwise90.png#width_small" alt="" />
+&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>0601201801575135195309015021045105165225&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_1801952102251201351501656075901050153045_Clockwise180FlipVertical.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise180, FlipVertical&lt;/td>
+&lt;td>1801952102251201351501656075901050153045&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_1801952102251201351501656075901050153045_FlipHorizontal.png#width_small" alt="" />
+&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>1801952102251201351501656075901050153045&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="there-are-only-8-distinct-transformations">There are only 8 distinct transformations&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>image&lt;/th>
+&lt;th>transformations&lt;/th>
+&lt;th>hash&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_0153045607590105120135150165180195210225_NoOp.png#width_small" alt="" />
+&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>0153045607590105120135150165180195210225&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_4510516522530901502101575135195060120180_Clockwise90.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>4510516522530901502101575135195060120180&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_2252101951801651501351201059075604530150_Clockwise180.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>2252101951801651501351201059075604530150&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_1801206001951357515210150903022516510545_Clockwise270.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>1801206001951357515210150903022516510545&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_2251651054521015090301951357515180120600_Clockwise90FlipVertical.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>2251651054521015090301951357515180120600&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_1801952102251201351501656075901050153045_FlipHorizontal.png#width_small" alt="" />
+&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>1801952102251201351501656075901050153045&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_4530150105907560165150135120225210195180_FlipVertical.png#width_small" alt="" />
+&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>4530150105907560165150135120225210195180&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_0601201801575135195309015021045105165225_FlipVerticalClockwise90.png#width_small" alt="" />
+&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>0601201801575135195309015021045105165225&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="image-transformations">image transformations&lt;/h2>
+&lt;p>take this tile from the example input&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>Tile 1951:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>#.##...##.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>#.####...#
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>.....#..##
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>#...######
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>.##.#....#
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>.###.#####
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>###.##.##.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>.###....#.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>..#.#..#.#
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>#...##.#..
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="tiles-as-images">tiles as images&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>image&lt;/th>
+&lt;th>transformations&lt;/th>
+&lt;th>image&lt;/th>
+&lt;th>transformations&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/tile-transformations/1951_NoOp.png#width_small" alt="" />
+&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/tile-transformations/1951_Clockwise90FlipVertical.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/tile-transformations/1951_Clockwise90.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/tile-transformations/1951_FlipHorizontal.png#width_small" alt="" />
+&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/tile-transformations/1951_Clockwise180.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/tile-transformations/1951_FlipVertical.png#width_small" alt="" />
+&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/tile-transformations/1951_Clockwise270.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/tile-transformations/1951_FlipVerticalClockwise90.png#width_small" alt="" />
+&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="calculating-edges">calculating edges&lt;/h2>
+&lt;p>To find the matching edges I decided to encode the edges of each tile (and its transformed representations) as hashes.
+For that we take the top, left, bottom and right pixels and convert them into binary representation.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>#.##...##. --&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1011000110 = 710
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>So the top edge of tile 1951 from above is represented as 710.&lt;/p>
+&lt;h2 id="matching-edges">matching edges&lt;/h2>
+&lt;p>To find a matching pair the directions of the matches matter.&lt;/p>
+&lt;h3 id="match-direction-vertical">match-direction: vertical&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>id1 (top)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>id2 (bottom)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="match-direction-horizontal">match-direction: horizontal&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>id1 (left) | id2 (right)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="matching-tiles">matching tiles&lt;/h3>
+&lt;p>This are all the matching edges.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>tile1 id&lt;/th>
+&lt;th>transformation tile1&lt;/th>
+&lt;th>tile2 id&lt;/th>
+&lt;th>transformation tile2&lt;/th>
+&lt;th>match direction&lt;/th>
+&lt;th>hash of matching edge&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>1171&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>1489&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>288&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1171&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>1489&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>18&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1171&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>1489&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>391&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1171&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>1489&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>902&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1171&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>2473&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>966&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1171&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>2473&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>399&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1171&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>2473&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>96&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1171&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>2473&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>24&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>1489&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>948&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>1489&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>183&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>1489&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>300&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>1489&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>210&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>2311&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>210&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>300&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>2311&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>183&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>2311&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>948&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>2473&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>234&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>2473&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>348&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>2473&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>9&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>2473&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>576&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>2729&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>576&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>9&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>348&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>234&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1489&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>1171&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>18&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1489&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>1171&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>288&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1489&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>1171&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>689&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1489&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>1171&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>565&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1489&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>948&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1489&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>183&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1489&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>43&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1489&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>848&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1489&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>2971&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>565&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1489&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>2971&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>689&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1489&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>2971&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>288&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1489&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>2971&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>18&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1951&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>2311&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>498&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1951&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>2311&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>318&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1951&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>587&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1951&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>2311&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>841&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1951&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>710&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1951&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>397&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1951&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>177&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1951&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>2729&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>564&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>210&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>300&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>924&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>231&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>1951&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>498&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>1951&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>318&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>1951&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>616&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>1951&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>89&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>3079&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>89&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>3079&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>616&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>3079&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>318&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>3079&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>498&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2473&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>1171&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>966&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2473&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>1171&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>399&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2473&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>1171&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>184&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2473&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>1171&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>116&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2473&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>234&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2473&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>348&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2473&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>481&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2473&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>542&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2473&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>3079&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>116&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2473&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>3079&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>184&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2473&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>3079&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>399&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2473&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>3079&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>966&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>576&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>9&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>962&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>1427&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>271&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>1951&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>710&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>1951&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>397&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>1951&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>680&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>1951&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>85&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>2971&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>85&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>2971&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>680&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>2971&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>397&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>2971&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>710&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2971&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>1489&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>565&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2971&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>1489&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>689&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2971&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>1489&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>78&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2971&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>1489&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>456&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2971&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>2729&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>85&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2971&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>680&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2971&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>2729&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>532&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2971&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>2729&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>161&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>3079&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>616&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>3079&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>2311&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>89&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>3079&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>66&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>3079&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>264&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>3079&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>2473&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>184&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>3079&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>2473&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td>116&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>3079&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>2473&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>501&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>3079&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>2473&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td>702&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="finding-the-corner-pieces">finding the corner pieces&lt;/h2>
+&lt;p>If you count the number of matching tiles for each tile, you can determine their place in the picture.&lt;/p>
+&lt;p>The tiles with only two matching tiles must be the corners of the picture. Thankfully, Erik designed the puzzle in a way that this property holds.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>tile id&lt;/th>
+&lt;th>matching tiles&lt;/th>
+&lt;th>number of matches&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>1171&lt;/td>
+&lt;td>1489,2473&lt;/td>
+&lt;td>2&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>1489,2311,2473,2729&lt;/td>
+&lt;td>4&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1489&lt;/td>
+&lt;td>1171,1427,2971&lt;/td>
+&lt;td>3&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1951&lt;/td>
+&lt;td>2311,2729&lt;/td>
+&lt;td>2&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>1427,1951,3079&lt;/td>
+&lt;td>3&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2473&lt;/td>
+&lt;td>1171,1427,3079&lt;/td>
+&lt;td>3&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>1427,1951,2971&lt;/td>
+&lt;td>3&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2971&lt;/td>
+&lt;td>1489,2729&lt;/td>
+&lt;td>2&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>3079&lt;/td>
+&lt;td>2311,2473&lt;/td>
+&lt;td>2&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>So, our corners are these tiles.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>tile id&lt;/th>
+&lt;th>matching tiles&lt;/th>
+&lt;th>number of matches&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>1171&lt;/td>
+&lt;td>1489,2473&lt;/td>
+&lt;td>2&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1951&lt;/td>
+&lt;td>2311,2729&lt;/td>
+&lt;td>2&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2971&lt;/td>
+&lt;td>1489,2729&lt;/td>
+&lt;td>2&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>3079&lt;/td>
+&lt;td>2311,2473&lt;/td>
+&lt;td>2&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="assembling-the-picture">assembling the picture&lt;/h2>
+&lt;p>Assembling the picture turns out to be quite complex. First, we have to pick one of the four corner pieces and assume, this is our top-left tile.&lt;/p>
+&lt;p>Let&amp;rsquo;s pick the aforementioned corner-tile 1951 as our top-left cornerpiece.&lt;/p>
+&lt;p>We now have to figure out how to transform it in a way, such that the matching edges are on the inside - or, we flip it around and look for the edges that face outwards.&lt;/p>
+&lt;h3 id="finding-the-outer-edges">finding the outer edges&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>tile ids&lt;/th>
+&lt;th>number of tiles with that edge&lt;/th>
+&lt;th>edge hash&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&amp;hellip;&lt;/td>
+&lt;td>&amp;hellip;&lt;/td>
+&lt;td>&amp;hellip;&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427, 1489&lt;/td>
+&lt;td>2&lt;/td>
+&lt;td>948&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>1951&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>1&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>177&lt;/strong>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>1951&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>1&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>564&lt;/strong>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>1951&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>1&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>587&lt;/strong>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>1951&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>1&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>841&lt;/strong>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1951, 2311&lt;/td>
+&lt;td>2&lt;/td>
+&lt;td>318&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1951, 2729&lt;/td>
+&lt;td>2&lt;/td>
+&lt;td>397&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1951, 2311&lt;/td>
+&lt;td>2&lt;/td>
+&lt;td>498&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1951, 2729&lt;/td>
+&lt;td>2&lt;/td>
+&lt;td>710&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>1&lt;/td>
+&lt;td>231&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&amp;hellip;&lt;/td>
+&lt;td>&amp;hellip;&lt;/td>
+&lt;td>&amp;hellip;&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>We now have to pick those transformations where the top &lt;em>and&lt;/em> left edge have one of those hashes (177, 564, 587, 841)&lt;/p>
+&lt;h4 id="finding-correct-transformations-of-1951-to-make-it-a-cornerpiece-with-the-correct-edges-facing-outwards">finding correct transformations of 1951 to make it a cornerpiece with the correct edges facing outwards&lt;/h4>
+&lt;p>Here are the edge-configurations of every possible transformation of tile 1951.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>transformation&lt;/th>
+&lt;th>top&lt;/th>
+&lt;th>left&lt;/th>
+&lt;th>bottom&lt;/th>
+&lt;th>right&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>177&lt;/td>
+&lt;td>318&lt;/td>
+&lt;td>397&lt;/td>
+&lt;td>587&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>318&lt;/td>
+&lt;td>177&lt;/td>
+&lt;td>587&lt;/td>
+&lt;td>397&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>397&lt;/td>
+&lt;td>498&lt;/td>
+&lt;td>177&lt;/td>
+&lt;td>841&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>498&lt;/td>
+&lt;td>397&lt;/td>
+&lt;td>841&lt;/td>
+&lt;td>177&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>FlipVertical&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>564&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>587&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>710&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>318&lt;/strong>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Clockwise90&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>587&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>564&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>318&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>710&lt;/strong>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>NoOp&lt;/td>
+&lt;td>710&lt;/td>
+&lt;td>841&lt;/td>
+&lt;td>564&lt;/td>
+&lt;td>498&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>841&lt;/td>
+&lt;td>710&lt;/td>
+&lt;td>498&lt;/td>
+&lt;td>564&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>We now know, that there are only two valid transformations of tile 1951: FlipVertical and Clockwise90.&lt;/p>
+&lt;p>With this information we can orient the neighbors of 1951 properly.&lt;/p>
+&lt;h4 id="orienting-the-neighbors">orienting the neighbors&lt;/h4>
+&lt;p>We know from above that 1951 only has two possible neighbors.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>tile id&lt;/th>
+&lt;th>matching tiles&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>1951&lt;/td>
+&lt;td>2311,2729&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Let&amp;rsquo;s expand that relationship further.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:right">tile1 id&lt;/th>
+&lt;th>transformation tile1&lt;/th>
+&lt;th>tile2 id&lt;/th>
+&lt;th>transformation tile2&lt;/th>
+&lt;th>match direction&lt;/th>
+&lt;th style="text-align:right">hash of matching edge&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:right">1951&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>2311&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td style="text-align:right">318&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:right">1951&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>2729&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td style="text-align:right">564&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:right">1951&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>horizontal&lt;/td>
+&lt;td style="text-align:right">710&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:right">1951&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>vertical&lt;/td>
+&lt;td style="text-align:right">587&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>We have two possibilities to arange these pieces&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>y\x&lt;/th>
+&lt;th>0&lt;/th>
+&lt;th>1&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>0&lt;/td>
+&lt;td>1951 FlipVertical &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1951_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>2311 FlipVertical &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2311_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2729_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;!-- raw HTML omitted --> 2729 FlipVertical &lt;!-- raw HTML omitted -->&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>y\x&lt;/th>
+&lt;th>0&lt;/th>
+&lt;th>1&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>0&lt;/td>
+&lt;td>1951 Clockwise90 &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1951_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>2729 Clockwise90 &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2729_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2311_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;!-- raw HTML omitted --> 2311 Clockwise90 &lt;!-- raw HTML omitted -->&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h4 id="more-constraints">more constraints&lt;/h4>
+&lt;p>We know that the piece at (1,0) has to have its top edge outwards-facing.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>tile ids&lt;/th>
+&lt;th>number of tiles with that edge&lt;/th>
+&lt;th>edge hash&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>1&lt;/td>
+&lt;td>231&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>1&lt;/td>
+&lt;td>924&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>1&lt;/td>
+&lt;td>271&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>1&lt;/td>
+&lt;td>962&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Here are the tile-configurations of 2311 and 2729 after applying the possible transformations (FlipVertical and Clockwise90)&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>id&lt;/th>
+&lt;th>transformation&lt;/th>
+&lt;th>top&lt;/th>
+&lt;th>left&lt;/th>
+&lt;th>bottom&lt;/th>
+&lt;th>right&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>&lt;strong>231&lt;/strong>&lt;/td>
+&lt;td>318&lt;/td>
+&lt;td>210&lt;/td>
+&lt;td>616&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>318&lt;/td>
+&lt;td>&lt;strong>231&lt;/strong>&lt;/td>
+&lt;td>616&lt;/td>
+&lt;td>210&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>710&lt;/td>
+&lt;td>&lt;strong>962&lt;/strong>&lt;/td>
+&lt;td>85&lt;/td>
+&lt;td>9&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>&lt;strong>962&lt;/strong>&lt;/td>
+&lt;td>710&lt;/td>
+&lt;td>9&lt;/td>
+&lt;td>85&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Let&amp;rsquo;s examine 2311:&lt;/p>
+&lt;ul>
+&lt;li>if we put 2311 at (1,0) we have to apply FlipVertical. The the top edge has to be facing outwards, which it does (hash 231).&lt;/li>
+&lt;li>if we put 2311 at (0,1) we have to apply Clockwise90. The the left edge has to be facing outwards, which it does (hash 231).&lt;/li>
+&lt;/ul>
+&lt;p>Let&amp;rsquo;s examine 2729:&lt;/p>
+&lt;ul>
+&lt;li>if we put 2729 at (1,0) we have to apply Clockwise90. The the top edge has to be facing outwards, which it does (hash 962).&lt;/li>
+&lt;li>if we put 2729 at (0,1) we have to apply FlipVertical. The the left edge has to be facing outwards, which it does (hash 962).&lt;/li>
+&lt;/ul>
+&lt;p>This doesn&amp;rsquo;t help us either, since these configurations are still valid.&lt;/p>
+&lt;h4 id="finding-tiles-with-two-neighbors">finding tiles with two neighbors&lt;/h4>
+&lt;p>We want to place the tile (1,1). It has to satisfy the following condition&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-scala" data-lang="scala">&lt;span style="display:flex;">&lt;span> tile&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#f92672">,&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#f92672">).&lt;/span>top &lt;span style="color:#f92672">==&lt;/span> tile&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#f92672">,&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>&lt;span style="color:#f92672">).&lt;/span>bottom
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> tile&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#f92672">,&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#f92672">).&lt;/span>left &lt;span style="color:#f92672">==&lt;/span> tile&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>&lt;span style="color:#f92672">,&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#f92672">).&lt;/span>right
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>id&lt;/th>
+&lt;th>transformation&lt;/th>
+&lt;th>x&lt;/th>
+&lt;th>y&lt;/th>
+&lt;th>top&lt;/th>
+&lt;th>left&lt;/th>
+&lt;th>bottom&lt;/th>
+&lt;th>right&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>1&lt;/td>
+&lt;td>0&lt;/td>
+&lt;td>231&lt;/td>
+&lt;td>318&lt;/td>
+&lt;td>210&lt;/td>
+&lt;td>616&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>0&lt;/td>
+&lt;td>1&lt;/td>
+&lt;td>710&lt;/td>
+&lt;td>962&lt;/td>
+&lt;td>85&lt;/td>
+&lt;td>9&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2729&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>1&lt;/td>
+&lt;td>0&lt;/td>
+&lt;td>962&lt;/td>
+&lt;td>710&lt;/td>
+&lt;td>9&lt;/td>
+&lt;td>85&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2311&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>0&lt;/td>
+&lt;td>1&lt;/td>
+&lt;td>318&lt;/td>
+&lt;td>231&lt;/td>
+&lt;td>616&lt;/td>
+&lt;td>210&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>This means we&amp;rsquo;re looking for a tile t where&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>t.top == 210 &amp;amp;&amp;amp; t.left == 9 ||
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>t.top == 9 &amp;amp;&amp;amp; t.left == 210
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>id&lt;/th>
+&lt;th>transformation&lt;/th>
+&lt;th>top&lt;/th>
+&lt;th>left&lt;/th>
+&lt;th>bottom&lt;/th>
+&lt;th>right&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>9&lt;/td>
+&lt;td>210&lt;/td>
+&lt;td>348&lt;/td>
+&lt;td>948&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1427&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>210&lt;/td>
+&lt;td>9&lt;/td>
+&lt;td>948&lt;/td>
+&lt;td>348&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>We have still have two possibilities to arange these pieces.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>y\x&lt;/th>
+&lt;th>0&lt;/th>
+&lt;th>1&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>0&lt;/td>
+&lt;td>1951 FlipVertical &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1951_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>2311 FlipVertical &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2311_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2729_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;!-- raw HTML omitted --> 2729 FlipVertical &lt;!-- raw HTML omitted -->&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1427_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;!-- raw HTML omitted --> 1427 FlipVertical &lt;!-- raw HTML omitted -->&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>y\x&lt;/th>
+&lt;th>0&lt;/th>
+&lt;th>1&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>0&lt;/td>
+&lt;td>1951 Clockwise90 &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1951_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>2729 Clockwise90 &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2729_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2311_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;!-- raw HTML omitted --> 2311 Clockwise90 &lt;!-- raw HTML omitted -->&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1427_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;!-- raw HTML omitted --> 1427 Clockwise90 &lt;!-- raw HTML omitted -->&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h4 id="finding-the-top-right-corner-piece">finding the top right corner piece&lt;/h4>
+&lt;p>We can now look for the top right corner piece with one added constraint. Its left edge has to match the right edge of (1,0). The transformation has to orient the tile in a way that the top and right faces point outwards.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>id&lt;/th>
+&lt;th>transformation&lt;/th>
+&lt;th>top&lt;/th>
+&lt;th>left&lt;/th>
+&lt;th>bottom&lt;/th>
+&lt;th>right&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>2971&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>78&lt;/td>
+&lt;td>85&lt;/td>
+&lt;td>689&lt;/td>
+&lt;td>161&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>3079&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>702&lt;/td>
+&lt;td>616&lt;/td>
+&lt;td>184&lt;/td>
+&lt;td>264&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Still two possibilities to arrange our tiles.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>y\x&lt;/th>
+&lt;th>0&lt;/th>
+&lt;th>1&lt;/th>
+&lt;th>2&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>0&lt;/td>
+&lt;td>1951 FlipVertical &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1951_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>2311 FlipVertical &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2311_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>3079 NoOp &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/3079_NoOp.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2729_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;!-- raw HTML omitted --> 2729 FlipVertical &lt;!-- raw HTML omitted -->&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1427_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;!-- raw HTML omitted --> 2729 FlipVertical &lt;!-- raw HTML omitted -->&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>y\x&lt;/th>
+&lt;th>0&lt;/th>
+&lt;th>1&lt;/th>
+&lt;th>2&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>0&lt;/td>
+&lt;td>1951 Clockwise90 &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1951_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>2729 Clockwise90 &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2729_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>2971 Clockwise90 &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2971_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2311_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;!-- raw HTML omitted --> 2311 Clockwise90 &lt;!-- raw HTML omitted -->&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1427_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;!-- raw HTML omitted --> 1427 Clockwise90 &lt;!-- raw HTML omitted -->&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h4 id="finding-the-bottom-left-corner-piece">finding the bottom left corner piece&lt;/h4>
+&lt;p>We can now look for the bottom left corner piece with one added constraint. Its top edge has to match the bottom edge of (0,1). The transformation has to orient the tile in a way that the bottom and left faces point outwards.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>id&lt;/th>
+&lt;th>transformation&lt;/th>
+&lt;th>top&lt;/th>
+&lt;th>left&lt;/th>
+&lt;th>bottom&lt;/th>
+&lt;th>right&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>2971&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>85&lt;/td>
+&lt;td>78&lt;/td>
+&lt;td>161&lt;/td>
+&lt;td>689&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>3079&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>616&lt;/td>
+&lt;td>702&lt;/td>
+&lt;td>264&lt;/td>
+&lt;td>184&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>y\x&lt;/th>
+&lt;th>0&lt;/th>
+&lt;th>1&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>0&lt;/td>
+&lt;td>1951 FlipVertical &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1951_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>2311 FlipVertical &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2311_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2729_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1427_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2971_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>y\x&lt;/th>
+&lt;th>0&lt;/th>
+&lt;th>1&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>0&lt;/td>
+&lt;td>1951 Clockwise90 &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1951_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>2729 Clockwise90 &lt;!-- raw HTML omitted -->
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2729_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2311_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1427_Clockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/3079_FlipVerticalClockwise90.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="mirrored-symmetry">mirrored symmetry&lt;/h3>
+&lt;p>We see that it&amp;rsquo;s going to continue to find two possibilities, since the whole thing can be mirrored. For completing the example we just pick the first configuration.
+For that we place 2971 at (2,0) and 3079 at (0,2).&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>y\x&lt;/th>
+&lt;th>0&lt;/th>
+&lt;th>1&lt;/th>
+&lt;th>2&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>0&lt;/td>
+&lt;td>1951 FlipVertical&lt;/td>
+&lt;td>2311 FlipVertical&lt;/td>
+&lt;td>3079 NoOp&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1&lt;/td>
+&lt;td>2729 FlipVertical&lt;/td>
+&lt;td>1427 FlipVertical&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2&lt;/td>
+&lt;td>2971 FlipVertical&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>y\x&lt;/th>
+&lt;th>0&lt;/th>
+&lt;th>1&lt;/th>
+&lt;th>2&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>0&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1951_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2311_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/3079_NoOp.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2729_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1427_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2971_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="continue-to-fill-the-missing-pieces">continue to fill the missing pieces&lt;/h3>
+&lt;h4 id="12">(1,2)&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>id&lt;/th>
+&lt;th>transformation&lt;/th>
+&lt;th>top&lt;/th>
+&lt;th>left&lt;/th>
+&lt;th>bottom&lt;/th>
+&lt;th>right&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>1489&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>948&lt;/td>
+&lt;td>689&lt;/td>
+&lt;td>848&lt;/td>
+&lt;td>288&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>y\x&lt;/th>
+&lt;th>0&lt;/th>
+&lt;th>1&lt;/th>
+&lt;th>2&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>0&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1951_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2311_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/3079_NoOp.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2729_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1427_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2971_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1489_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h4 id="21">(2,1)&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>id&lt;/th>
+&lt;th>transformation&lt;/th>
+&lt;th>top&lt;/th>
+&lt;th>left&lt;/th>
+&lt;th>bottom&lt;/th>
+&lt;th>right&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>2473&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>184&lt;/td>
+&lt;td>348&lt;/td>
+&lt;td>399&lt;/td>
+&lt;td>481&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>y\x&lt;/th>
+&lt;th>0&lt;/th>
+&lt;th>1&lt;/th>
+&lt;th>2&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>0&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1951_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2311_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/3079_NoOp.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2729_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1427_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2473_Clockwise90FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2971_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1489_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h4 id="22">(2,2)&lt;/h4>
+&lt;p>Yay - our last cornerpiece&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>id&lt;/th>
+&lt;th>transformation&lt;/th>
+&lt;th>top&lt;/th>
+&lt;th>left&lt;/th>
+&lt;th>bottom&lt;/th>
+&lt;th>right&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>1171&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>399&lt;/td>
+&lt;td>288&lt;/td>
+&lt;td>96&lt;/td>
+&lt;td>902&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="the-last-piece">the last piece&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>y\x&lt;/th>
+&lt;th>0&lt;/th>
+&lt;th>1&lt;/th>
+&lt;th>2&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>0&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1951_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2311_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/3079_NoOp.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>1&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2729_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1427_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2473_Clockwise90FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>2&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/2971_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1489_FlipVertical.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./tile-transformations/1171_FlipHorizontal.png"
+width="150"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="generalizing-the-rules">generalizing the rules&lt;/h3>
+&lt;ul>
+&lt;li>pick one of the cornerpieces for (0,0) and orient it
+&lt;ul>
+&lt;li>top and left edges must face outwards&lt;/li>
+&lt;li>if there are more than one possible transformation, pick one of them&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-scala" data-lang="scala">&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">val&lt;/span> filterFn&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#f92672">((&lt;/span>&lt;span style="color:#66d9ef">Int&lt;/span>&lt;span style="color:#f92672">,&lt;/span> &lt;span style="color:#66d9ef">Edge&lt;/span>&lt;span style="color:#f92672">,&lt;/span> &lt;span style="color:#66d9ef">List&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">Transformation&lt;/span>&lt;span style="color:#f92672">],&lt;/span> &lt;span style="color:#a6e22e">BufferedImage&lt;/span>&lt;span style="color:#f92672">))&lt;/span> &lt;span style="color:#66d9ef">=&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">Boolean&lt;/span> &lt;span style="color:#66d9ef">=&lt;/span> &lt;span style="color:#f92672">{&lt;/span> row &lt;span style="color:#66d9ef">=&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">(&lt;/span>useTopTileFilter&lt;span style="color:#f92672">,&lt;/span> useLeftTileFilter&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#66d9ef">match&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#66d9ef">true&lt;/span>&lt;span style="color:#f92672">,&lt;/span> &lt;span style="color:#66d9ef">true&lt;/span>&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#66d9ef">=&amp;gt;&lt;/span> topTileFilter&lt;span style="color:#f92672">(&lt;/span>row&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> leftTileFilter&lt;span style="color:#f92672">(&lt;/span>row&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#66d9ef">true&lt;/span>&lt;span style="color:#f92672">,&lt;/span> &lt;span style="color:#66d9ef">false&lt;/span>&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#66d9ef">=&amp;gt;&lt;/span> topTileFilter&lt;span style="color:#f92672">(&lt;/span>row&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> leftOuterFilter&lt;span style="color:#f92672">(&lt;/span>row&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#66d9ef">false&lt;/span>&lt;span style="color:#f92672">,&lt;/span> &lt;span style="color:#66d9ef">true&lt;/span>&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#66d9ef">=&amp;gt;&lt;/span> leftTileFilter&lt;span style="color:#f92672">(&lt;/span>row&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> topOuterFilter&lt;span style="color:#f92672">(&lt;/span>row&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#66d9ef">false&lt;/span>&lt;span style="color:#f92672">,&lt;/span> &lt;span style="color:#66d9ef">false&lt;/span>&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#66d9ef">=&amp;gt;&lt;/span> topOuterFilter&lt;span style="color:#f92672">(&lt;/span>row&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> leftOuterFilter&lt;span style="color:#f92672">(&lt;/span>row&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="finding-nessi">finding Nessi&lt;/h2>
+&lt;h3 id="the-final-assembly">the final assembly&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>assembled image &lt;!-- raw HTML omitted --> with borders&lt;/th>
+&lt;th>assembled image &lt;!-- raw HTML omitted --> with highlighted border&lt;/th>
+&lt;th>final version &lt;!-- raw HTML omitted --> with borders removed&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./final-images/final_with_borders_NoOp.png"
+width="330"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./final-images/final_with_red_borders_NoOp.png"
+width="330"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./final-images/final_without_borders_NoOp.png"
+width="264"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;!-- raw HTML omitted -->
+&lt;!-- raw HTML omitted -->
+&lt;!-- raw HTML omitted -->
+&lt;!-- raw HTML omitted -->
+&lt;!-- raw HTML omitted -->
+&lt;!-- raw HTML omitted -->
+&lt;h3 id="nessi">nessi&lt;/h3>
+&lt;p>We have to find this pattern in the final image, but (of course) we don&amp;rsquo;t know how the image has been transformed.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span> #
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span># ## ## ###
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> # # # # # #
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>
+&lt;img
+src="/adventofcode-docu/2020/day20//./sea_monster.png"
+width="220"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;p>We transform the image in all 8 ways and search for the pattern in each image.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>transformations&lt;/th>
+&lt;th>image&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>NoOp&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./final-images/final_without_borders_NoOp.png"
+width="120"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./final-images/final_without_borders_Clockwise90.png"
+width="120"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./final-images/final_without_borders_Clockwise180.png"
+width="120"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./final-images/final_without_borders_Clockwise270.png"
+width="120"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./final-images/final_without_borders_FlipHorizontal.png"
+width="120"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./final-images/final_without_borders_FlipVertical.png"
+width="120"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>FlipVerticalClockwise90&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./final-images/final_without_borders_FlipVerticalClockwise90.png"
+width="120"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Clockwise90FlipVertical&lt;/td>
+&lt;td>
+&lt;img
+src="/adventofcode-docu/2020/day20//./final-images/final_without_borders_Clockwise90FlipVertical.png"
+width="120"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="the-final-image">The final image&lt;/h2>
+&lt;img
+src="/adventofcode-docu/2020/day20//./solved/final_image_FlipVerticalClockwise90.png"
+width="120"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;p>We need to count the number of water-pixels that are not occupied by a sea monster.
+I don&amp;rsquo;t know if the sea monsters would overlap, so I selected all sea-monster pixels and diffed it with all water-pixels.&lt;/p>
+&lt;img
+src="/adventofcode-docu/2020/day20//./solved/final_image_colored.png"
+width="360"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>sea-monster sightings&lt;/th>
+&lt;th>sea-monster pixels&lt;/th>
+&lt;th>water pixels&lt;/th>
+&lt;th>diff&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>2&lt;/td>
+&lt;td>30&lt;/td>
+&lt;td>303&lt;/td>
+&lt;td>273 (our answer)&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="solution-for-part-2">Solution for part 2&lt;/h2>
+&lt;p>The solution for the random seed of my user looked like this&lt;/p>
+&lt;img
+src="/adventofcode-docu/2020/day20//./real-input/solved/final_image_colored.png"
+width="520"
+class="left"
+style="; image-rendering: pixelated; image-rendering: -moz-crisp-edges;"
+/>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>sea-monster sightings&lt;/th>
+&lt;th>sea-monster pixels&lt;/th>
+&lt;th>water pixels&lt;/th>
+&lt;th>diff&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>19&lt;/td>
+&lt;td>285&lt;/td>
+&lt;td>1914&lt;/td>
+&lt;td>1629 (our answer)&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Turned out there were no overlapping sea monsters ;-)&lt;/p>
+&lt;p>Great fun, but quite complex to solve. I could have done it a lot simpler, but I enjoyed the programming with graphics.&lt;/p>
+&lt;p>$$
+$$&lt;/p></content></item></channel></rss>

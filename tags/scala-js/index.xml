@@ -1,2 +1,176 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>scala-js on Terminal</title><link>/tags/scala-js/</link><description>Recent content in scala-js on Terminal</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 02 Dec 2021 13:42:37 +0100</lastBuildDate><atom:link href="/tags/scala-js/index.xml" rel="self" type="application/rss+xml"/><item><title>Adventofcode - Solver in scala.js</title><link>/posts/adventofcode/2021/solver/</link><pubDate>Thu, 02 Dec 2021 13:42:37 +0100</pubDate><guid>/posts/adventofcode/2021/solver/</guid><description>This year I tried to solve the codingchallenge more visual to begin with. So I opted for scalajs using outwatch.
-AoC scalajs solver</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Scala-Js on fl(o)wi</title><link>/tags/scala-js/</link><description>Recent content in Scala-Js on fl(o)wi</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 10 Mar 2024 12:15:49 +0100</lastBuildDate><atom:link href="/tags/scala-js/index.xml" rel="self" type="application/rss+xml"/><item><title>Spacetraders Agent written in scala - Architecture overview</title><link>/posts/architecture-overview/</link><pubDate>Sun, 10 Mar 2024 12:15:49 +0100</pubDate><guid>/posts/architecture-overview/</guid><description>Overview Infrastructure My go-to setup for running infrastructure services locally is docker-compose. I&amp;rsquo;m using postgres as a database and grafana for some dashboards.
+docker-compose setup for infrastructure postgres grafana Since I also developed a dashboard for the agents and wanted to reuse some helpers, I added profiles to docker-compose. If I want to start the stack for the agent, I run this command:
+docker compose --profile agent up agent architecture I like coding in a functional style and use cats-effect as the runtime effect system.</description><content>&lt;h1 id="overview">Overview&lt;/h1>
+&lt;h2 id="infrastructure">Infrastructure&lt;/h2>
+&lt;p>My go-to setup for running infrastructure services locally is docker-compose. I&amp;rsquo;m using postgres as a database and grafana for some dashboards.&lt;/p>
+&lt;ul>
+&lt;li>docker-compose setup for infrastructure
+&lt;ul>
+&lt;li>postgres&lt;/li>
+&lt;li>grafana&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>Since I also developed a dashboard for the agents and wanted to reuse some helpers, I added profiles to docker-compose. If I want to start the stack for the
+agent, I run this command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>docker compose --profile agent up
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="agent-architecture">agent architecture&lt;/h2>
+&lt;p>I like coding in a functional style and use &lt;a href="https://typelevel.org/cats-effect/">cats-effect&lt;/a> as the runtime effect system. I had trouble with the openapi
+generator for scala, since it didn&amp;rsquo;t work in some cases or didn&amp;rsquo;t produce code that matches my coding style.&lt;/p>
+&lt;p>Luckily the folks at Disney created a nice ecosystem around smithy that worked very well for code generation.
+I&amp;rsquo;m using &lt;a href="https://github.com/disneystreaming/smithy-translate">smithy-translate&lt;/a> to convert the openapi-spec into a smithy model (with minor fixes) and from
+there I use &lt;a href="https://github.com/disneystreaming/smithy4s">smithy4s&lt;/a> to generate the client.
+Shout out to the authors (especially @Baccata) who were very helpful in their discord channel when I ran into problems.&lt;/p>
+&lt;p>The library is awesome and generates code for an &lt;a href="https://http4s.org/">http4s-client&lt;/a> that is easily extensible:&lt;/p>
+&lt;ul>
+&lt;li>adding authorization via bearer-token&lt;/li>
+&lt;li>enabling request logging&lt;/li>
+&lt;li>adding rate-limiting with priority &lt;a href="https://github.com/SystemFw/upperbound">upperbound&lt;/a>&lt;/li>
+&lt;li>easy to fix
+&lt;ul>
+&lt;li>had to change the behavior of posting an empty request; client was sending &lt;code>null&lt;/code> but st-server didn&amp;rsquo;t like that&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="libraries-used">libraries used&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>lib&lt;/th>
+&lt;th>description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>smithy-translate&lt;/td>
+&lt;td>tool for converting openapi-sepc to smithy model&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>smithy4s&lt;/td>
+&lt;td>plugin for generating http4s client/server from smithy model&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>http4s&lt;/td>
+&lt;td>http client/server&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>cats-effect&lt;/td>
+&lt;td>runtime effect system&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>upperbound&lt;/td>
+&lt;td>rate limiting for cats-effect IO&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>circe&lt;/td>
+&lt;td>json (de)serialization&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>enumeratum&lt;/td>
+&lt;td>better enums for scala&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>monocle&lt;/td>
+&lt;td>optics library for easier manipulation of nested properties inside immutable datastructures&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>flyway&lt;/td>
+&lt;td>database migration&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>doobie&lt;/td>
+&lt;td>functional JDBC layer&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>fs2&lt;/td>
+&lt;td>functional streaming&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="bootstrapping-of-agent">bootstrapping of agent&lt;/h2>
+&lt;p>The startup of the agent happens with the unregistered instance of the client. It doesn&amp;rsquo;t use a bearer-token.&lt;/p>
+&lt;h3 id="database-migration">database migration&lt;/h3>
+&lt;p>When I start the agent, the first thing I check is the &lt;a href="https://api.spacetraders.io/v2/">status endpoint&lt;/a>. I take the reset-date from its response, parse it and
+use it as a schema name in postgres.
+e.g. this response&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;status&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;SpaceTraders is currently online and available to play&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;version&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;v2.1.5&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;resetDate&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;2024-02-25&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>becomes &lt;code>reset_2024_02_25&lt;/code>.&lt;/p>
+&lt;p>I use flyway to migrate my database schema (it also creates one if it doesn&amp;rsquo;t exist). From there I have a schema ready to be used and instantiate a hikari
+connection-pool with the connectionstring.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-scala" data-lang="scala">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">def&lt;/span> transactorResource&lt;span style="color:#f92672">(&lt;/span>connectionString&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> username&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> password&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> schema&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">)&lt;/span>&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Resource&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>, &lt;span style="color:#66d9ef">HikariTransactor&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>&lt;span style="color:#f92672">]]&lt;/span> &lt;span style="color:#66d9ef">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ce &lt;span style="color:#66d9ef">&amp;lt;-&lt;/span> &lt;span style="color:#a6e22e">ExecutionContexts&lt;/span>&lt;span style="color:#f92672">.&lt;/span>fixedThreadPool&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>&lt;span style="color:#f92672">](&lt;/span>&lt;span style="color:#ae81ff">32&lt;/span>&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> xa &lt;span style="color:#66d9ef">&amp;lt;-&lt;/span> &lt;span style="color:#a6e22e">HikariTransactor&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">.&lt;/span>newHikariTransactor&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>&lt;span style="color:#f92672">](&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;org.postgresql.Driver&amp;#34;&lt;/span>&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> connectionString&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> username&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> password&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ce&lt;span style="color:#f92672">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">.&lt;/span>evalTap&lt;span style="color:#f92672">(&lt;/span>tx &lt;span style="color:#66d9ef">=&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> tx&lt;span style="color:#f92672">.&lt;/span>configure &lt;span style="color:#f92672">{&lt;/span> ds &lt;span style="color:#66d9ef">=&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Async&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>&lt;span style="color:#f92672">].&lt;/span>delay &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ds setSchema schema
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">}&lt;/span> &lt;span style="color:#66d9ef">yield&lt;/span> xa
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>After that step I modify the readonly grafana user to have that schema as default in its search path.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sql" data-lang="sql">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">-- Grant usage and all privileges on the schema to the user
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">GRANT&lt;/span> &lt;span style="color:#66d9ef">USAGE&lt;/span> &lt;span style="color:#66d9ef">ON&lt;/span> &lt;span style="color:#66d9ef">SCHEMA&lt;/span> reset_2024_02_25 &lt;span style="color:#66d9ef">TO&lt;/span> grafana_user;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">GRANT&lt;/span> &lt;span style="color:#66d9ef">SELECT&lt;/span> &lt;span style="color:#66d9ef">ON&lt;/span> &lt;span style="color:#66d9ef">ALL&lt;/span> TABLES &lt;span style="color:#66d9ef">IN&lt;/span> &lt;span style="color:#66d9ef">SCHEMA&lt;/span> reset_2024_02_25 &lt;span style="color:#66d9ef">TO&lt;/span> grafana_user;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">-- Grant all privileges on new tables in the schema to the user
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">ALTER&lt;/span> &lt;span style="color:#66d9ef">DEFAULT&lt;/span> &lt;span style="color:#66d9ef">PRIVILEGES&lt;/span> &lt;span style="color:#66d9ef">IN&lt;/span> &lt;span style="color:#66d9ef">SCHEMA&lt;/span> reset_2024_02_25
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">GRANT&lt;/span> &lt;span style="color:#66d9ef">ALL&lt;/span> &lt;span style="color:#66d9ef">ON&lt;/span> TABLES &lt;span style="color:#66d9ef">TO&lt;/span> grafana_user;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">-- Set the default search path to the new schema
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">ALTER&lt;/span> &lt;span style="color:#66d9ef">USER&lt;/span> grafana_user &lt;span style="color:#66d9ef">SET&lt;/span> search_path &lt;span style="color:#66d9ef">TO&lt;/span> reset_2024_02_25;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>That way I don&amp;rsquo;t need to update the grafana dashboard with new connectionstrings.&lt;/p>
+&lt;h3 id="registering-my-agent-if-necessray">registering my agent if necessray&lt;/h3>
+&lt;p>On startup I check my &lt;code>registration&lt;/code> table to see if I already registered my agent and use its token. If not I use the infos from env vars to register. I added
+a 10s delay before registering, because I forgot to change some settings in the past ;-)&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-scala" data-lang="scala">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">IO&lt;/span>&lt;span style="color:#f92672">.&lt;/span>println&lt;span style="color:#f92672">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">s&amp;#34;&amp;#34;&amp;#34;Registering agent with these details:
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> | Symbol: &lt;/span>&lt;span style="color:#e6db74">${&lt;/span>registrationInputBody&lt;span style="color:#f92672">.&lt;/span>symbol&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> | E-Mail: &lt;/span>&lt;span style="color:#e6db74">${&lt;/span>registrationInputBody&lt;span style="color:#f92672">.&lt;/span>email&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> | Faction: &lt;/span>&lt;span style="color:#e6db74">${&lt;/span>registrationInputBody&lt;span style="color:#f92672">.&lt;/span>faction&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> |
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> |You have 10s to cancel if you want to change anything.&amp;#34;&amp;#34;&amp;#34;&lt;/span>&lt;span style="color:#f92672">.&lt;/span>stripMargin&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#f92672">*&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">IO&lt;/span>&lt;span style="color:#f92672">.&lt;/span>sleep&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">10.&lt;/span>seconds&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#75715e">/* *&amp;gt; ... */&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="background-collection-of-big-data">background collection of &amp;ldquo;big&amp;rdquo; data&lt;/h2>
+&lt;p>In my codebase I use two different clients that talk to the st-servers. One with a high priority that controls the ships or loads essential data and another one
+with a low priority that collects data in the background (like systems, waypoints, jump-gates etc.)&lt;/p>
+&lt;p>The low priority client is used in a streaming context (with fs2) to prevent excessive memory usage and provide back-pressure. It&amp;rsquo;s also straightforward to ingest responses from the paginated endpoints.&lt;/p>
+&lt;p>Here&amp;rsquo;s an example in where I collect the waypoints of a system:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-scala" data-lang="scala">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">def&lt;/span> loadSystemWaypointsPaginated&lt;span style="color:#f92672">(&lt;/span>systemSymbol&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">String&lt;/span>&lt;span style="color:#f92672">)&lt;/span>&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Stream&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>, &lt;span style="color:#66d9ef">GetSystemWaypoints200&lt;/span>&lt;span style="color:#f92672">]&lt;/span> &lt;span style="color:#66d9ef">=&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Stream&lt;/span>&lt;span style="color:#f92672">.&lt;/span>eval&lt;span style="color:#f92672">(&lt;/span>getListWaypointsPageIO&lt;span style="color:#f92672">(&lt;/span>systemSymbol&lt;span style="color:#f92672">,&lt;/span> &lt;span style="color:#a6e22e">PaginationInput&lt;/span>&lt;span style="color:#f92672">(&lt;/span>page &lt;span style="color:#66d9ef">=&lt;/span> &lt;span style="color:#a6e22e">Some&lt;/span>&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#f92672">),&lt;/span> limit &lt;span style="color:#66d9ef">=&lt;/span> &lt;span style="color:#a6e22e">Some&lt;/span>&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">20&lt;/span>&lt;span style="color:#f92672">))))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">.&lt;/span>flatMap &lt;span style="color:#f92672">{&lt;/span> first &lt;span style="color:#66d9ef">=&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">val&lt;/span> rest &lt;span style="color:#66d9ef">=&lt;/span> &lt;span style="color:#a6e22e">PaginationHelper&lt;/span>&lt;span style="color:#f92672">.&lt;/span>calcRestRequests&lt;span style="color:#f92672">(&lt;/span>first&lt;span style="color:#f92672">.&lt;/span>body&lt;span style="color:#f92672">.&lt;/span>meta&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">val&lt;/span> restStream&lt;span style="color:#66d9ef">:&lt;/span> &lt;span style="color:#66d9ef">Stream&lt;/span>&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>, &lt;span style="color:#66d9ef">GetSystemWaypoints200&lt;/span>&lt;span style="color:#f92672">]&lt;/span> &lt;span style="color:#66d9ef">=&lt;/span> &lt;span style="color:#a6e22e">Stream&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">.&lt;/span>iterable&lt;span style="color:#f92672">(&lt;/span>rest&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">.&lt;/span>lift&lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#66d9ef">IO&lt;/span>&lt;span style="color:#f92672">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">.&lt;/span>evalMap&lt;span style="color:#f92672">(&lt;/span>page &lt;span style="color:#66d9ef">=&amp;gt;&lt;/span> getListWaypointsPageIO&lt;span style="color:#f92672">(&lt;/span>systemSymbol&lt;span style="color:#f92672">,&lt;/span> page&lt;span style="color:#f92672">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Stream&lt;/span>&lt;span style="color:#f92672">(&lt;/span>first&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#f92672">++&lt;/span> restStream
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
+&lt;li>collect first page&lt;/li>
+&lt;li>take &lt;code>Meta&lt;/code> object from response of the first page to&lt;/li>
+&lt;li>calculate the numbers of the remaining pages to create a stream&lt;/li>
+&lt;li>concat the first page with the rest of the stream&lt;/li>
+&lt;/ul>
+&lt;h2 id="heading">&lt;/h2></content></item><item><title>Adventofcode - Solver in scala.js</title><link>/posts/adventofcode/2021/solver/</link><pubDate>Thu, 02 Dec 2021 13:42:37 +0100</pubDate><guid>/posts/adventofcode/2021/solver/</guid><description>This year I tried to solve the codingchallenge more visual to begin with. So I opted for scalajs using outwatch.
+AoC scalajs solver</description><content>&lt;p>This year I tried to solve the codingchallenge more visual to begin with. So I opted for scalajs using outwatch.&lt;/p>
+&lt;p>&lt;a href="/adventofcode">AoC scalajs solver&lt;/a>&lt;/p></content></item></channel></rss>
