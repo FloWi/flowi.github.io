@@ -1,6 +1,20 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Scala-Js on fl(o)wi</title><link>/tags/scala-js/</link><description>Recent content in Scala-Js on fl(o)wi</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 10 Mar 2024 12:15:49 +0100</lastBuildDate><atom:link href="/tags/scala-js/index.xml" rel="self" type="application/rss+xml"/><item><title>Spacetraders Agent written in scala - Architecture overview</title><link>/posts/architecture-overview/</link><pubDate>Sun, 10 Mar 2024 12:15:49 +0100</pubDate><guid>/posts/architecture-overview/</guid><description>Overview Infrastructure My go-to setup for running infrastructure services locally is docker-compose. I&amp;rsquo;m using postgres as a database and grafana for some dashboards.
-docker-compose setup for infrastructure postgres grafana Since I also developed a dashboard for the agents and wanted to reuse some helpers, I added profiles to docker-compose. If I want to start the stack for the agent, I run this command:
-docker compose --profile agent up agent architecture I like coding in a functional style and use cats-effect as the runtime effect system.</description><content>&lt;h1 id="overview">Overview&lt;/h1>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Scala-Js on fl(o)wi</title><link>/tags/scala-js/</link><description>Recent content in Scala-Js on fl(o)wi</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 10 Mar 2024 12:15:49 +0100</lastBuildDate><atom:link href="/tags/scala-js/index.xml" rel="self" type="application/rss+xml"/><item><title>Spacetraders Agent written in scala - Architecture overview</title><link>/posts/architecture-overview/</link><pubDate>Sun, 10 Mar 2024 12:15:49 +0100</pubDate><guid>/posts/architecture-overview/</guid><description>&lt;h1 id="overview">Overview&lt;/h1>
+&lt;h2 id="infrastructure">Infrastructure&lt;/h2>
+&lt;p>My go-to setup for running infrastructure services locally is docker-compose. I&amp;rsquo;m using postgres as a database and grafana for some dashboards.&lt;/p>
+&lt;ul>
+&lt;li>docker-compose setup for infrastructure
+&lt;ul>
+&lt;li>postgres&lt;/li>
+&lt;li>grafana&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>Since I also developed a dashboard for the agents and wanted to reuse some helpers, I added profiles to docker-compose. If I want to start the stack for the
+agent, I run this command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>docker compose --profile agent up
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="agent-architecture">agent architecture&lt;/h2>
+&lt;p>I like coding in a functional style and use &lt;a href="https://typelevel.org/cats-effect/">cats-effect&lt;/a> as the runtime effect system. I had trouble with the openapi
+generator for scala, since it didn&amp;rsquo;t work in some cases or didn&amp;rsquo;t produce code that matches my coding style.&lt;/p></description><content>&lt;h1 id="overview">Overview&lt;/h1>
 &lt;h2 id="infrastructure">Infrastructure&lt;/h2>
 &lt;p>My go-to setup for running infrastructure services locally is docker-compose. I&amp;rsquo;m using postgres as a database and grafana for some dashboards.&lt;/p>
 &lt;ul>
@@ -171,6 +185,6 @@ with a low priority that collects data in the background (like systems, waypoint
 &lt;li>calculate the numbers of the remaining pages to create a stream&lt;/li>
 &lt;li>concat the first page with the rest of the stream&lt;/li>
 &lt;/ul>
-&lt;h2 id="heading">&lt;/h2></content></item><item><title>Adventofcode - Solver in scala.js</title><link>/posts/adventofcode/2021/solver/</link><pubDate>Thu, 02 Dec 2021 13:42:37 +0100</pubDate><guid>/posts/adventofcode/2021/solver/</guid><description>This year I tried to solve the codingchallenge more visual to begin with. So I opted for scalajs using outwatch.
-AoC scalajs solver</description><content>&lt;p>This year I tried to solve the codingchallenge more visual to begin with. So I opted for scalajs using outwatch.&lt;/p>
+&lt;h2 id="heading">&lt;/h2></content></item><item><title>Adventofcode - Solver in scala.js</title><link>/posts/adventofcode/2021/solver/</link><pubDate>Thu, 02 Dec 2021 13:42:37 +0100</pubDate><guid>/posts/adventofcode/2021/solver/</guid><description>&lt;p>This year I tried to solve the codingchallenge more visual to begin with. So I opted for scalajs using outwatch.&lt;/p>
+&lt;p>&lt;a href="/adventofcode">AoC scalajs solver&lt;/a>&lt;/p></description><content>&lt;p>This year I tried to solve the codingchallenge more visual to begin with. So I opted for scalajs using outwatch.&lt;/p>
 &lt;p>&lt;a href="/adventofcode">AoC scalajs solver&lt;/a>&lt;/p></content></item></channel></rss>

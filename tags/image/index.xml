@@ -1,8 +1,147 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Image on fl(o)wi</title><link>/tags/image/</link><description>Recent content in Image on fl(o)wi</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 02 Jan 2021 22:26:37 +0100</lastBuildDate><atom:link href="/tags/image/index.xml" rel="self" type="application/rss+xml"/><item><title>Adventofcode 2020 - Day 20</title><link>/posts/adventofcode/2020/day-20/</link><pubDate>Sat, 02 Jan 2021 22:26:37 +0100</pubDate><guid>/posts/adventofcode/2020/day-20/</guid><description>day 20 https://adventofcode.com/2020/day/20
-The task is to assemble an image from different 10x10 tiles. The tiles themselves can be flipped and rotated.
-transformations I didn&amp;rsquo;t want to calculate the image transformations myself, so I used java&amp;rsquo;s java.awt.geom.AffineTransform. I created a 4x4 testimage with 16 different shades of red to calculate a hash of the overall image to check, which transformation yield the same result.
-all 18 possible transformations
-Clockwise180 Clockwise180,FlipHorizontal Clockwise180,FlipVertical Clockwise270 Clockwise270,FlipHorizontal Clockwise270,FlipVertical Clockwise90 Clockwise90,FlipHorizontal Clockwise90,FlipVertical FlipHorizontal FlipHorizontal,Clockwise180 FlipHorizontal,Clockwise270 FlipHorizontal,Clockwise90 FlipVertical FlipVertical,Clockwise180 FlipVertical,Clockwise270 FlipVertical,Clockwise90 NoOp examples of different transformations yielding the same image image transformations hash NoOp 0153045607590105120135150165180195210225 Clockwise270, FlipVertical 0601201801575135195309015021045105165225 FlipVertical, Clockwise90 0601201801575135195309015021045105165225 Clockwise180, FlipVertical 1801952102251201351501656075901050153045 FlipHorizontal 1801952102251201351501656075901050153045 There are only 8 distinct transformations image transformations hash NoOp 0153045607590105120135150165180195210225 Clockwise90 4510516522530901502101575135195060120180 Clockwise180 2252101951801651501351201059075604530150 Clockwise270 1801206001951357515210150903022516510545 Clockwise90, FlipVertical 2251651054521015090301951357515180120600 FlipHorizontal 1801952102251201351501656075901050153045 FlipVertical 4530150105907560165150135120225210195180 FlipVertical, Clockwise90 0601201801575135195309015021045105165225 image transformations take this tile from the example input</description><content>&lt;h1 id="day-20">day 20&lt;/h1>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Image on fl(o)wi</title><link>/tags/image/</link><description>Recent content in Image on fl(o)wi</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 02 Jan 2021 22:26:37 +0100</lastBuildDate><atom:link href="/tags/image/index.xml" rel="self" type="application/rss+xml"/><item><title>Adventofcode 2020 - Day 20</title><link>/posts/adventofcode/2020/day-20/</link><pubDate>Sat, 02 Jan 2021 22:26:37 +0100</pubDate><guid>/posts/adventofcode/2020/day-20/</guid><description>&lt;h1 id="day-20">day 20&lt;/h1>
+&lt;p>&lt;a href="https://adventofcode.com/2020/day/20">https://adventofcode.com/2020/day/20&lt;/a>&lt;/p>
+&lt;p>The task is to assemble an image from different 10x10 tiles. The tiles themselves can be flipped and rotated.&lt;/p>
+&lt;h2 id="transformations">transformations&lt;/h2>
+&lt;p>I didn&amp;rsquo;t want to calculate the image transformations myself, so I used java&amp;rsquo;s &lt;code>java.awt.geom.AffineTransform&lt;/code>.
+I created a 4x4 testimage with 16 different shades of red to calculate a hash of the overall image to check, which transformation yield the same result.&lt;/p>
+&lt;p>all 18 possible transformations&lt;/p>
+&lt;ul>
+&lt;li>Clockwise180&lt;/li>
+&lt;li>Clockwise180,FlipHorizontal&lt;/li>
+&lt;li>Clockwise180,FlipVertical&lt;/li>
+&lt;li>Clockwise270&lt;/li>
+&lt;li>Clockwise270,FlipHorizontal&lt;/li>
+&lt;li>Clockwise270,FlipVertical&lt;/li>
+&lt;li>Clockwise90&lt;/li>
+&lt;li>Clockwise90,FlipHorizontal&lt;/li>
+&lt;li>Clockwise90,FlipVertical&lt;/li>
+&lt;li>FlipHorizontal&lt;/li>
+&lt;li>FlipHorizontal,Clockwise180&lt;/li>
+&lt;li>FlipHorizontal,Clockwise270&lt;/li>
+&lt;li>FlipHorizontal,Clockwise90&lt;/li>
+&lt;li>FlipVertical&lt;/li>
+&lt;li>FlipVertical,Clockwise180&lt;/li>
+&lt;li>FlipVertical,Clockwise270&lt;/li>
+&lt;li>FlipVertical,Clockwise90&lt;/li>
+&lt;li>NoOp&lt;/li>
+&lt;/ul>
+&lt;h3 id="examples-of-different-transformations-yielding-the-same-image">examples of different transformations yielding the same image&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>image&lt;/th>
+&lt;th>transformations&lt;/th>
+&lt;th>hash&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_0153045607590105120135150165180195210225_NoOp.png#width_small" alt="" />
+&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>0153045607590105120135150165180195210225&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_0601201801575135195309015021045105165225_Clockwise270FlipVertical.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise270, FlipVertical&lt;/td>
+&lt;td>0601201801575135195309015021045105165225&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_0601201801575135195309015021045105165225_FlipVerticalClockwise90.png#width_small" alt="" />
+&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>0601201801575135195309015021045105165225&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_1801952102251201351501656075901050153045_Clockwise180FlipVertical.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise180, FlipVertical&lt;/td>
+&lt;td>1801952102251201351501656075901050153045&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_1801952102251201351501656075901050153045_FlipHorizontal.png#width_small" alt="" />
+&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>1801952102251201351501656075901050153045&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="there-are-only-8-distinct-transformations">There are only 8 distinct transformations&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>image&lt;/th>
+&lt;th>transformations&lt;/th>
+&lt;th>hash&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_0153045607590105120135150165180195210225_NoOp.png#width_small" alt="" />
+&lt;/td>
+&lt;td>NoOp&lt;/td>
+&lt;td>0153045607590105120135150165180195210225&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_4510516522530901502101575135195060120180_Clockwise90.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise90&lt;/td>
+&lt;td>4510516522530901502101575135195060120180&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_2252101951801651501351201059075604530150_Clockwise180.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise180&lt;/td>
+&lt;td>2252101951801651501351201059075604530150&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_1801206001951357515210150903022516510545_Clockwise270.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise270&lt;/td>
+&lt;td>1801206001951357515210150903022516510545&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_2251651054521015090301951357515180120600_Clockwise90FlipVertical.png#width_small" alt="" />
+&lt;/td>
+&lt;td>Clockwise90, FlipVertical&lt;/td>
+&lt;td>2251651054521015090301951357515180120600&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_1801952102251201351501656075901050153045_FlipHorizontal.png#width_small" alt="" />
+&lt;/td>
+&lt;td>FlipHorizontal&lt;/td>
+&lt;td>1801952102251201351501656075901050153045&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_4530150105907560165150135120225210195180_FlipVertical.png#width_small" alt="" />
+&lt;/td>
+&lt;td>FlipVertical&lt;/td>
+&lt;td>4530150105907560165150135120225210195180&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>
+&lt;img src="/adventofcode-docu/2020/day20/image-transformations/image_hash_0601201801575135195309015021045105165225_FlipVerticalClockwise90.png#width_small" alt="" />
+&lt;/td>
+&lt;td>FlipVertical, Clockwise90&lt;/td>
+&lt;td>0601201801575135195309015021045105165225&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="image-transformations">image transformations&lt;/h2>
+&lt;p>take this tile from the example input&lt;/p></description><content>&lt;h1 id="day-20">day 20&lt;/h1>
 &lt;p>&lt;a href="https://adventofcode.com/2020/day/20">https://adventofcode.com/2020/day/20&lt;/a>&lt;/p>
 &lt;p>The task is to assemble an image from different 10x10 tiles. The tiles themselves can be flipped and rotated.&lt;/p>
 &lt;h2 id="transformations">transformations&lt;/h2>
@@ -1268,46 +1407,46 @@ For that we take the top, left, bottom and right pixels and convert them into bi
 &lt;table>
 &lt;thead>
 &lt;tr>
-&lt;th style="text-align:right">tile1 id&lt;/th>
+&lt;th style="text-align: right">tile1 id&lt;/th>
 &lt;th>transformation tile1&lt;/th>
 &lt;th>tile2 id&lt;/th>
 &lt;th>transformation tile2&lt;/th>
 &lt;th>match direction&lt;/th>
-&lt;th style="text-align:right">hash of matching edge&lt;/th>
+&lt;th style="text-align: right">hash of matching edge&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td style="text-align:right">1951&lt;/td>
+&lt;td style="text-align: right">1951&lt;/td>
 &lt;td>FlipVertical&lt;/td>
 &lt;td>2311&lt;/td>
 &lt;td>FlipVertical&lt;/td>
 &lt;td>horizontal&lt;/td>
-&lt;td style="text-align:right">318&lt;/td>
+&lt;td style="text-align: right">318&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:right">1951&lt;/td>
+&lt;td style="text-align: right">1951&lt;/td>
 &lt;td>FlipVertical&lt;/td>
 &lt;td>2729&lt;/td>
 &lt;td>FlipVertical&lt;/td>
 &lt;td>vertical&lt;/td>
-&lt;td style="text-align:right">564&lt;/td>
+&lt;td style="text-align: right">564&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:right">1951&lt;/td>
+&lt;td style="text-align: right">1951&lt;/td>
 &lt;td>Clockwise90&lt;/td>
 &lt;td>2729&lt;/td>
 &lt;td>Clockwise90&lt;/td>
 &lt;td>horizontal&lt;/td>
-&lt;td style="text-align:right">710&lt;/td>
+&lt;td style="text-align: right">710&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:right">1951&lt;/td>
+&lt;td style="text-align: right">1951&lt;/td>
 &lt;td>Clockwise90&lt;/td>
 &lt;td>2311&lt;/td>
 &lt;td>Clockwise90&lt;/td>
 &lt;td>vertical&lt;/td>
-&lt;td style="text-align:right">587&lt;/td>
+&lt;td style="text-align: right">587&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
